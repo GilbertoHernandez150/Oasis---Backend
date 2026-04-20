@@ -25,7 +25,7 @@ from database import (
     registrar_historial
 )
 
-NETLIFY_URL = "https://oasisv1.netlify.app/"  # ← pon tu URL real
+NETLIFY_URL = "https://oasisv1.netlify.app"  # ← pon tu URL real
 
 app = Flask(__name__)
 CORS(app, origins=[NETLIFY_URL, "http://localhost:5500", "http://127.0.0.1:5500"])
