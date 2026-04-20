@@ -25,10 +25,10 @@ from database import (
     registrar_historial
 )
 
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend')
+NETLIFY_URL = "https://oasisv1.netlify.app/"  # ← pon tu URL real
 
-app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path='')
-CORS(app)
+app = Flask(__name__)
+CORS(app, origins=[NETLIFY_URL, "http://localhost:5500", "http://127.0.0.1:5500"])
 
 init_db()
 
@@ -132,31 +132,17 @@ def safe_jsonify(data: dict, status: int = 200):
 
 
 # ============================================================
-# SERVIR EL FRONTEND
+# RUTA RAÍZ — solo confirma que el backend está vivo
 # ============================================================
 @app.route('/')
 def index():
-    return send_from_directory(FRONTEND_DIR, 'index.html')
-
-@app.route('/<path:path>')
-def static_files(path):
-    # login.html siempre accesible
-    if path == 'login.html':
-        return send_from_directory(FRONTEND_DIR, 'login.html')
-    full = os.path.join(FRONTEND_DIR, path)
-    if os.path.exists(full):
-        return send_from_directory(FRONTEND_DIR, path)
-    return send_from_directory(FRONTEND_DIR, 'index.html')
-
+    return safe_jsonify({"status": "OASIS Backend activo", "version": "1.0"})
 
 # ============================================================
 # ENDPOINT: LOGIN
 # ============================================================
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
-    if request.method == "GET":
-        return send_from_directory(FRONTEND_DIR, 'login.html')
-
     data     = request.get_json() or {}
     username = data.get('username', '').strip().lower()
     password = data.get('password', '')
